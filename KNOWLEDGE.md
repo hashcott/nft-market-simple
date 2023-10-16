@@ -31,7 +31,7 @@
 
 
 
-- Xây dựng ERC20 và BEP20 của thư viên OpenZeppelin
+- Xây dựng ERC20 vs EIP-20 và BEP20 của thư viên OpenZeppelin
 + ERC20 và BEP20 là gì ? (EIP chuẩn - được đề xuất bởi các nhà phát triển eth)
 + fungible tokens
 + mỗi đơn vị có thể hoán đổi cho nhau
