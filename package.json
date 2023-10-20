@@ -2,7 +2,6 @@
   "name": "vite-project",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -10,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^5.0.0",
+    "@openzeppelin/contracts": "^4.9.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
