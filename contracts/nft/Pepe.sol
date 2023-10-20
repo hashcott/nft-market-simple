@@ -1,27 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
-contract Pepe is ERC721, Ownable {
-    uint256 public counter = 0;
-    string private baseTokenURI;
+contract Pepe is ERC721URIStorage {
+    uint256 public tokenCounter = 0;
 
     constructor() ERC721("Pepe Voz", "Pepe") {}
 
-    function mint(address _to) public onlyOwner returns (uint256) {
-        counter++;
-        uint256 _tokenId = counter;
-        _mint(_to, _tokenId);
-        return _tokenId;
-    }
-
-    function _baseURI() internal view virtual override returns (string memory) {
-        return baseTokenURI;
-    }
-
-    function updateBaseTokenURI(string memory _baseTokenURI) public onlyOwner {
-        baseTokenURI = _baseTokenURI;
+    function mint(string memory _tokenURI) external returns (uint256) {
+        tokenCounter++;
+        _safeMint(msg.sender, tokenCounter);
+        _setTokenURI(tokenCounter, _tokenURI);
+        return tokenCounter;
     }
 }
