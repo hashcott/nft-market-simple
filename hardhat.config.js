@@ -13,9 +13,8 @@ module.exports = {
       ], // private key of wallet
     },
     sepolia: {
-      url: "https://sepolia.infura.io/v3/ab5fc061d0614780a480bc9ddc2cf772",
+      url: "https://mainnet.infura.io/v3/ab5fc061d0614780a480bc9ddc2cf772",
       chainId: 11155111,
-      gasPrice: 20000000000,
       accounts: [
         "b93830f0fe9386e405870afe8939e3a00c3ab01151b86d476674dfe2783c9358",
       ],

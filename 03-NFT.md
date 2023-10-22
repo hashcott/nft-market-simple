@@ -18,6 +18,10 @@
 - Tính cộng đồng
 - Tính mở rộng
 
+## Kiến trúc
+
+![kien truc](/public/nft-flow.drawio.svg)
+
 ## Marketplace
 
 - addOrder: tạo order
