@@ -1,35 +1,78 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState } from "react";
+import { ethers } from "ethers";
+import MarketplaceAddress from "./contracstData/Marketplace-address.json";
+import MarketplaceABI from "./contracstData/Marketplace.json";
+import PepeAddress from "./contracstData/Pepe-address.json";
+import PepeABI from "./contracstData/Pepe.json";
+import Navbar from "./Navbar";
+import Home from "./Home";
+import Create from "./Create";
+import MyListedItems from "./MyListedItems";
+import MyPurchases from "./MyPurchases";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [account, setAccount] = useState(null);
+  const [marketplace, setMarketplace] = useState({});
+  const [pepe, setPepe] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  // Metamask Login/Connect
+  const web3Handler = async () => {
+    setLoading(true);
+    const accounts = await window.ethereum.request({
+      method: "eth_requestAccounts",
+      params: [],
+    });
+    setAccount(accounts[0]);
+
+    // Get provider from Metamask
+    const provider = new ethers.BrowserProvider(window.ethereum);
+
+    // Set signer
+
+    const signer = await provider.getSigner();
+
+    await loadContracts(signer);
+
+    setLoading(false);
+  };
+
+  const loadContracts = async (signer) => {
+    const marketplace = new ethers.Contract(
+      MarketplaceAddress.address,
+      MarketplaceABI.abi,
+      signer
+    );
+    setMarketplace(marketplace);
+    const pepe = new ethers.Contract(PepeAddress.address, PepeABI.abi, signer);
+    setPepe(pepe);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <BrowserRouter>
+      <>
+        <Navbar account={account} web3Handler={web3Handler} />
+
+        {loading ? (
+          <div className="flex flex-col items-center mt-4">
+            <span className="loading loading-ring loading-lg"></span>
+            <p>Await Metamask Connection...</p>
+          </div>
+        ) : (
+          <Routes>
+            <Route
+              path="/"
+              element={<Home marketplace={marketplace} pepe={pepe} />}
+            />
+            <Route path="/create" element={<Create />} />
+            <Route path="/my-listed-items" element={<MyListedItems />} />
+            <Route path="/my-purchases" element={<MyPurchases />} />
+          </Routes>
+        )}
+      </>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
