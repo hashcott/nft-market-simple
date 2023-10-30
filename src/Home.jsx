@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
+import { ethers } from "ethers";
 
 export default function Home({ marketplace, pepe }) {
-  console.log(marketplace);
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState([]);
 
   const loadMarketplaceItems = async () => {
     const itemCount = await marketplace.itemCount();
     let items = [];
-    for (let i = 0; i < itemCount; i++) {
-      const items = await marketplace.items(i);
-      if (!items.sold) {
+    for (let i = 1; i <= itemCount; i++) {
+      const item = await marketplace.items(i);
+      if (!item.sold) {
         // get uri url from nft contract
         const uri = await pepe.tokenURI(item.tokenId);
         // use uri to fetch the nft metadata stored on ipfs
@@ -35,6 +35,13 @@ export default function Home({ marketplace, pepe }) {
     setItems(items);
   };
 
+  const buyMarketItem = async (item) => {
+    await (
+      await marketplace.purchaseItem(item.itemId, { value: item.totalPrice })
+    ).wait();
+    await loadMarketplaceItems();
+  };
+
   useEffect(() => {
     loadMarketplaceItems();
   }, []); // componentDidMount
@@ -47,5 +54,29 @@ export default function Home({ marketplace, pepe }) {
     );
   }
 
-  return <div className="flex justify-center mt-4">Home</div>;
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
+      {items.map(({ totalPrice, itemId, name, image }) => (
+        <div
+          key={itemId}
+          className="card card-compact w-96 bg-[#202020] shadow-xl p-2"
+        >
+          <figure>
+            <img className="w-1/4" src={image} alt={name} />
+          </figure>
+          <div className="card-body">
+            <h2 className="card-title">{name}</h2>
+            <div className="card-actions font-bold justify-end">
+              <span
+                onClick={() => buyMarketItem({ itemId, totalPrice })}
+                className="btn text-lg"
+              >
+                {ethers.utils.formatEther(totalPrice)} ETH
+              </span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 }

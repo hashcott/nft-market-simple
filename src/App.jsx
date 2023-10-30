@@ -22,16 +22,25 @@ function App() {
     setLoading(true);
     const accounts = await window.ethereum.request({
       method: "eth_requestAccounts",
-      params: [],
     });
     setAccount(accounts[0]);
 
     // Get provider from Metamask
-    const provider = new ethers.BrowserProvider(window.ethereum);
+    const provider = new ethers.providers.Web3Provider(window.ethereum); // FIX : 5.7.3
 
     // Set signer
 
-    const signer = await provider.getSigner();
+    const signer = provider.getSigner(); // FIX : 5.7.3
+
+    window.ethereum.on("chainChanged", (chainId) => {
+      window.location.reload();
+    });
+
+    window.ethereum.on("accountsChanged", async function (accounts) {
+      console.log("helllo");
+      setAccount(accounts[0]);
+      await web3Handler();
+    });
 
     await loadContracts(signer);
 
@@ -65,9 +74,30 @@ function App() {
               path="/"
               element={<Home marketplace={marketplace} pepe={pepe} />}
             />
-            <Route path="/create" element={<Create />} />
-            <Route path="/my-listed-items" element={<MyListedItems />} />
-            <Route path="/my-purchases" element={<MyPurchases />} />
+            <Route
+              path="/create"
+              element={<Create marketplace={marketplace} pepe={pepe} />}
+            />
+            <Route
+              path="/my-listed-items"
+              element={
+                <MyListedItems
+                  marketplace={marketplace}
+                  pepe={pepe}
+                  account={account}
+                />
+              }
+            />
+            <Route
+              path="/my-purchases"
+              element={
+                <MyPurchases
+                  marketplace={marketplace}
+                  pepe={pepe}
+                  account={account}
+                />
+              }
+            />
           </Routes>
         )}
       </>

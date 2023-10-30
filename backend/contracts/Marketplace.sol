@@ -53,6 +53,7 @@ contract Marketplace is ReentrancyGuard {
         require(_price > 0, "Price must be greeter than zero");
         itemCount++;
         _nft.transferFrom(msg.sender, address(this), _tokenId);
+
         items[itemCount] = Item(
             itemCount,
             _nft,
